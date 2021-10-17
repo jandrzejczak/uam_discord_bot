@@ -115,7 +115,7 @@ function createEmbed(satEmbedEvents, sunEmbedEvents) {
 async function USOS_get_calendar(week) {
   events = [];
 
-  //satEmbed and sunEmbed needs to be removed
+  //satEmbed and sunEmbed needs to be removed for better support
   satEmbedEvents = [];
   sunEmbedEvents = [];
   var date = new Date(new Date().getTime() + week * 24 * 60 * 60 * 1000);
