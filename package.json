@@ -1,0 +1,30 @@
+{
+  "name": "uam_bot",
+  "version": "1.0.0",
+  "description": "UAM Discord bot for timetable and stuff...",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jandrzejczak/uam_discord_bot.git"
+  },
+  "keywords": [
+    "discord",
+    "uam",
+    "bot"
+  ],
+  "author": "Jordan Andrzejczak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jandrzejczak/uam_discord_bot/issues"
+  },
+  "homepage": "https://github.com/jandrzejczak/uam_discord_bot#readme",
+  "dependencies": {
+    "axios": "^0.22.0",
+    "axios-oauth-1.0a": "^0.3.2",
+    "discord.js": "^13.2.0"
+  }
+}
