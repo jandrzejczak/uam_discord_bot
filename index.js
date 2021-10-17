@@ -15,6 +15,7 @@ client.on("ready", () => {
   console.log("reeeeady!");
 });
 
+//React on user messages
 client.on("messageCreate", async (message) => {
   if (message.content === "!plan") {
     var result = await USOS_get_calendar(0);
@@ -71,11 +72,13 @@ client.login(ClientID);
 
 //Functions
 
+//Format date for USOS API
 function dateFormatter(date) {
   var utc = date.toJSON().slice(0, 10).replace(/-/g, "-");
   return utc;
 }
 
+//Check weekday name
 function getDayName(dateStr) {
   var date = new Date(dateStr);
   date = date.toLocaleDateString("pl-PL", { weekday: "long" });
@@ -83,6 +86,7 @@ function getDayName(dateStr) {
   return date + ": ";
 }
 
+//Generate flashy embed (nice)
 function createEmbed(satEmbedEvents, sunEmbedEvents) {
   var embed = new Discord.MessageEmbed()
     .setColor("#0099ff")
@@ -107,14 +111,18 @@ function createEmbed(satEmbedEvents, sunEmbedEvents) {
   return embed;
 }
 
+//Get timetable from USOS API
 async function USOS_get_calendar(week) {
   events = [];
+
+  //satEmbed and sunEmbed needs to be removed
   satEmbedEvents = [];
   sunEmbedEvents = [];
   var date = new Date(new Date().getTime() + week * 24 * 60 * 60 * 1000);
   var utc = date.toJSON().slice(0, 10).replace(/-/g, "-");
   const client = axios.create();
 
+  //OAuth interceptor options for axios
   const options = {
     algorithm: "HMAC-SHA1",
     key: app_key,
@@ -122,6 +130,7 @@ async function USOS_get_calendar(week) {
     token: token,
     tokenSecret: tokenSecret,
   };
+  //Some fucked up shit idk why
   addOAuthInterceptor.default.default(client, options);
   await client
     .get("https://usosapps.amu.edu.pl/services/tt/user?start=" + utc, {
@@ -133,7 +142,7 @@ async function USOS_get_calendar(week) {
       events.forEach((element) => {
         var startDate = element.start_time.split(" ");
         var endDate = element.end_time.split(" ");
-        var day = getDayName(startDate[0]);
+        // var day = getDayName(startDate[0]);
         if (startDate[0] === satDate[0]) {
           var obj = {};
           obj["date"] = getDayName(startDate[0]);
