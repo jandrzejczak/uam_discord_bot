@@ -3,61 +3,14 @@ import * as Discord from "discord.js";
 import axios from "axios";
 import * as addOAuthInterceptor from "axios-oauth-1.0a";
 
+//wtf are intents?
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 
 var events = [];
 var satEmbedEvents = [];
 var sunEmbedEvents = [];
 
-async function USOS_get_calendar(week) {
-  events = [];
-  satEmbedEvents = [];
-  sunEmbedEvents = [];
-  var date = new Date(new Date().getTime() + week * 24 * 60 * 60 * 1000);
-  var utc = date.toJSON().slice(0, 10).replace(/-/g, "-");
-  const client = axios.create();
-
-  const options = {
-    algorithm: "HMAC-SHA1",
-    key: app_key,
-    secret: secret,
-    token: token,
-    tokenSecret: tokenSecret,
-  };
-  addOAuthInterceptor.default.default(client, options);
-  await client
-    .get("https://usosapps.amu.edu.pl/services/tt/user?start=" + utc, {
-      crossdomain: true,
-    })
-    .then((response) => {
-      events = events.concat(response.data);
-      const satDate = events[0].start_time.split(" ");
-      events.forEach((element) => {
-        var startDate = element.start_time.split(" ");
-        var endDate = element.end_time.split(" ");
-        var day = getDayName(startDate[0]);
-        if (startDate[0] === satDate[0]) {
-          var obj = {};
-          obj["date"] = getDayName(startDate[0]);
-          obj["name"] = element.name.pl;
-          obj["value"] =
-            startDate[1].slice(0, 5) + " — " + endDate[1].slice(0, 5);
-          satEmbedEvents.push(obj);
-        } else {
-          var obj = {};
-          obj["date"] = getDayName(startDate[0]);
-          obj["name"] = element.name.pl;
-          obj["value"] =
-            startDate[1].slice(0, 5) + " — " + endDate[1].slice(0, 5);
-          sunEmbedEvents.push(obj);
-        }
-      });
-    })
-    .catch((error) => {
-      throw error;
-    });
-}
-
+//When ready
 client.on("ready", () => {
   console.log("reeeeady!");
 });
@@ -116,6 +69,8 @@ client.on("messageCreate", async (message) => {
 
 client.login(ClientID);
 
+//Functions
+
 function dateFormatter(date) {
   var utc = date.toJSON().slice(0, 10).replace(/-/g, "-");
   return utc;
@@ -150,4 +105,53 @@ function createEmbed(satEmbedEvents, sunEmbedEvents) {
     .setFooter("UAM - niestacjonarnie");
 
   return embed;
+}
+
+async function USOS_get_calendar(week) {
+  events = [];
+  satEmbedEvents = [];
+  sunEmbedEvents = [];
+  var date = new Date(new Date().getTime() + week * 24 * 60 * 60 * 1000);
+  var utc = date.toJSON().slice(0, 10).replace(/-/g, "-");
+  const client = axios.create();
+
+  const options = {
+    algorithm: "HMAC-SHA1",
+    key: app_key,
+    secret: secret,
+    token: token,
+    tokenSecret: tokenSecret,
+  };
+  addOAuthInterceptor.default.default(client, options);
+  await client
+    .get("https://usosapps.amu.edu.pl/services/tt/user?start=" + utc, {
+      crossdomain: true,
+    })
+    .then((response) => {
+      events = events.concat(response.data);
+      const satDate = events[0].start_time.split(" ");
+      events.forEach((element) => {
+        var startDate = element.start_time.split(" ");
+        var endDate = element.end_time.split(" ");
+        var day = getDayName(startDate[0]);
+        if (startDate[0] === satDate[0]) {
+          var obj = {};
+          obj["date"] = getDayName(startDate[0]);
+          obj["name"] = element.name.pl;
+          obj["value"] =
+            startDate[1].slice(0, 5) + " — " + endDate[1].slice(0, 5);
+          satEmbedEvents.push(obj);
+        } else {
+          var obj = {};
+          obj["date"] = getDayName(startDate[0]);
+          obj["name"] = element.name.pl;
+          obj["value"] =
+            startDate[1].slice(0, 5) + " — " + endDate[1].slice(0, 5);
+          sunEmbedEvents.push(obj);
+        }
+      });
+    })
+    .catch((error) => {
+      throw error;
+    });
 }
