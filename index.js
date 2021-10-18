@@ -22,7 +22,7 @@ client.on("ready", () => {
   console.log("reeeeady!");
 });
 
-//React on user messages
+//React to user messages
 client.on("messageCreate", async (message) => {
   if (message.content === "!plan") {
     // var result = await USOS_get_calendar(0);

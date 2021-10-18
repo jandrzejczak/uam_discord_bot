@@ -23,7 +23,7 @@ node .
 
 #### Configuration:
 
-Make config.js file with:
+Create config.js file with:
 
 * Discord client ID named "ClientID"
 * USOS app key named "app_key"
