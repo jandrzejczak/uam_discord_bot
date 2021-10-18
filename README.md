@@ -30,6 +30,7 @@ Create config.js file with:
 * USOS app key secret named "secret"
 * UAM User OAuth 1.0a offline_access token named "token"
 * UAM User OAuth 1.0a offline_accesss token secret named "tokenSecret"
+* Bot Channel name named "bot_channel"
 
 
 
@@ -40,7 +41,7 @@ For now, discord bot supports non-stationary time tables.
 - [x] Working timetable in "embed" style
 - [x] Some response gimmicks (ex. "*c++ release date*")
 - [ ] Support for every lecture time table
-- [ ] Notifications when there was a change in time table
+- [x] Notifications when there was a change in time table
 - [ ] Support for other USOS-dependent universities
 - [ ] Finder for email and (or) phone number of lecturer
 - [ ] Support for different groups
