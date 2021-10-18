@@ -25,6 +25,7 @@
   "dependencies": {
     "axios": "^0.22.0",
     "axios-oauth-1.0a": "^0.3.2",
-    "discord.js": "^13.2.0"
+    "discord.js": "^13.2.0",
+    "lodash": "^4.17.21"
   }
 }

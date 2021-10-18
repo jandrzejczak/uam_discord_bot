@@ -1,14 +1,21 @@
-import { ClientID, token, tokenSecret, secret, app_key } from "./config.js";
+import { ClientID, token, tokenSecret, secret, app_key, bot_channel } from "./config.js";
 import * as Discord from "discord.js";
 import axios from "axios";
 import * as addOAuthInterceptor from "axios-oauth-1.0a";
+// import * as _ from "lodash";
+import _ from "lodash";
+// var _ = require('lodash');
 
 //wtf are intents?
 const client = new Discord.Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 
 var events = [];
+var tempEvents = [];
 var satEmbedEvents = [];
 var sunEmbedEvents = [];
+
+var today = new Date(new Date().getTime());
+var tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
 
 //When ready
 client.on("ready", () => {
@@ -18,7 +25,7 @@ client.on("ready", () => {
 //React on user messages
 client.on("messageCreate", async (message) => {
   if (message.content === "!plan") {
-    var result = await USOS_get_calendar(0);
+    // var result = await USOS_get_calendar(0);
     const timeTable = createEmbed(satEmbedEvents, sunEmbedEvents);
     message.channel.send({ embeds: [timeTable] });
   }
@@ -40,7 +47,7 @@ client.on("messageCreate", async (message) => {
     var embed = new Discord.MessageEmbed()
       .setColor("#42d4f5")
       .setTitle("1985")
-      .setDescription("Designed by	Bjarne Stroustrup")
+      .setDescription("Designed by Bjarne Stroustrup")
       .setThumbnail(
         "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/ISO_C%2B%2B_Logo.svg/1024px-ISO_C%2B%2B_Logo.svg.png"
       )
@@ -113,7 +120,7 @@ function createEmbed(satEmbedEvents, sunEmbedEvents) {
 
 //Get timetable from USOS API
 async function USOS_get_calendar(week) {
-  events = [];
+  // events = [];
 
   //satEmbed and sunEmbed needs to be removed for better support
   satEmbedEvents = [];
@@ -137,7 +144,7 @@ async function USOS_get_calendar(week) {
       crossdomain: true,
     })
     .then((response) => {
-      events = events.concat(response.data);
+      events = response.data;
       const satDate = events[0].start_time.split(" ");
       events.forEach((element) => {
         var startDate = element.start_time.split(" ");
@@ -164,3 +171,36 @@ async function USOS_get_calendar(week) {
       throw error;
     });
 }
+
+//Check for time table changes
+const checkCalendarChanged = async () => {
+  try {
+    await USOS_get_calendar(0);
+    today = new Date(new Date().getTime());
+
+    if (today.getDate() != tomorrow.getDate()) {
+      if (tempEvents.length === 0) {
+        console.log("puste");
+        tempEvents = events;
+      } else if (_.isEqual(events, tempEvents)) {
+        console.log("Time tables are equal.");
+      } else {
+        tempEvents = events;
+        //Send message to specific bot channel
+        const channel = client.channels.cache.find(
+          (channel) => channel.name === bot_channel
+        );
+        channel.send("Wprowadzono aktualizacje planu!");
+      }
+    } else {
+      tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+      tempEvents = events;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+//Check every hour for changes
+setInterval(checkCalendarChanged, 60 * 60 * 1000);
+// setInterval(checkCalendarChanged, 1000);
